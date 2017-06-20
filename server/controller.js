@@ -39,6 +39,19 @@ const checkdb = function () {
   });
 }
 
+const check_ticket = async (req, res)=> {
+   const {ticket_no = null} = req.params;
+   if (ticket_no === null) {return res.status(400).send({msg: 'params error'});}
+   const ticket = await mongo.tickets.findOne({ticket_no: ticket_no});
+   if (ticket === null) {return res.status(400).send({msg: 'not found'});}
+   const ticket_cat = await mongo.types.findOne({id: ticket.ticket_cat_id});
+   res.json({
+      ticket,
+      ticket_cat
+   });
+}
+
 export default {
-  checkdb
+  checkdb,
+  check_ticket
 }

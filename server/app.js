@@ -4,7 +4,6 @@ import logger         from 'morgan';
 import cookieParser   from 'cookie-parser';
 import bodyParser     from 'body-parser';
 import methodOverride from 'method-override';
-import routers        from './routers';
 import moment         from 'moment';
 import mongo          from './mongo';
 import controller     from  './controller';
@@ -36,16 +35,20 @@ app.use((err, req, res, next) => {
 // routes
 mongo.connect();
 controller.checkdb();
-const dateformat = function (obj, format) {
-  format = format || 'YYYY-MM-DD HH:mm:ss';
-  if (process.env.NODE_ENV === 'test') {
-    return obj;
-  }
-  return moment(obj).format(format);
-}
+
+app.get('/check/:ticket_no', controller.check_ticket);
+
 
 
 console.log('=====================================================');
 console.log('VMS SERVICES START AT ' + dateformat(new Date()));
 console.log('=====================================================');
 export default app;
+
+function dateformat (obj, format) {
+  format = format || 'YYYY-MM-DD HH:mm:ss';
+  if (process.env.NODE_ENV === 'test') {
+    return obj;
+  }
+  return moment(obj).format(format);
+}
