@@ -51,6 +51,33 @@ const types = newSchema('types',{
   sum_limit:       String,
 })
 
+const users = newSchema('users', {
+  id: String,
+  token: String,
+  expires_at: String,
+  tags: String,
+  role: String,
+  username: String,
+  email: String,
+  realname: String,
+  mobile: String,
+  company: String,
+  position: String,
+  avatar: String,
+  bio: String,
+  city: String,
+  created_at: String,
+  updated_at: String,
+  mygeekpark_open_id: String,
+  is_media: String,
+  refresh_token: String,
+  checked_count: String,
+  gender: String,
+  birthday: String,
+  privacy_level: String,
+  muted: String
+})
+
 export default {
   connect:  () => {
     mongoose.Promise = global.Promise;
@@ -68,4 +95,5 @@ export default {
   },
   tickets,
   types,
+  users,
 }

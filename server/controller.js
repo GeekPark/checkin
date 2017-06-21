@@ -33,6 +33,10 @@ const checkdb = function () {
       mongo.tickets.collection.insert(tickets, (err, result) => {
         err && console.log(err);
       });
+      const users = readcsv('public.users.csv');
+      mongo.users.collection.insert(users, (err, result) => {
+        err && console.log(err);
+      });
     } else {
       console.log(`已存在数据, 一共${data}条`);
     }
@@ -45,9 +49,11 @@ const check_ticket = async (req, res)=> {
    const ticket = await mongo.tickets.findOne({ticket_no: ticket_no});
    if (ticket === null) {return res.status(400).send({msg: 'not found'});}
    const ticket_cat = await mongo.types.findOne({id: ticket.ticket_cat_id});
+   const user =  await mongo.users.findOne({id: ticket.user_id});
    res.json({
       ticket,
-      ticket_cat
+      ticket_cat,
+      user
    });
 }
 
