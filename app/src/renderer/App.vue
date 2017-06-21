@@ -20,46 +20,15 @@
   }
 
   html,
-  body { height: 100%; }
+  body { height: 100%; width: 100%}
 
   body {
-    align-items: center;
     background:
       radial-gradient(
         ellipse at center,
         rgba(255, 255, 255, 1) 0%,
         rgba(229, 229, 229, .85) 100%
       );
-    background-position: center;
-    display: flex;
     font-family: Lato, Helvetica, sans-serif;
-    justify-content: center;
-    text-align: center;
-  }
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
   }
 </style>

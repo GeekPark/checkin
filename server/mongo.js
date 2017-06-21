@@ -28,6 +28,8 @@ const tickets = newSchema('tickets',{
   is_media:       String,
   notes:          String,
   ticket_no:      String,
+  checkin:        {type:Boolean, default: false},
+  checkin_time:   String,
 })
 
 const types = newSchema('types',{

@@ -4,7 +4,7 @@ import logger         from 'morgan';
 import cookieParser   from 'cookie-parser';
 import bodyParser     from 'body-parser';
 import methodOverride from 'method-override';
-import moment         from 'moment';
+import utils          from './utils';
 import mongo          from './mongo';
 import controller     from  './controller';
 const  app            = express();
@@ -41,14 +41,6 @@ app.get('/check/:ticket_no', controller.check_ticket);
 
 
 console.log('=====================================================');
-console.log('VMS SERVICES START AT ' + dateformat(new Date()));
+console.log('VMS SERVICES START AT ' + utils.dateformat(new Date()));
 console.log('=====================================================');
 export default app;
-
-function dateformat (obj, format) {
-  format = format || 'YYYY-MM-DD HH:mm:ss';
-  if (process.env.NODE_ENV === 'test') {
-    return obj;
-  }
-  return moment(obj).format(format);
-}
