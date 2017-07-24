@@ -89,7 +89,7 @@ export default {
     }, (err) => {
       console.log(dbname);
       if (err) {
-        console.error(`connect to ${$.config.db} error: ${err.message}`)
+        console.error(`connect to ${dbname} error: ${err.message}`)
         process.exit(1);
       }
       return mongoose.connection;
