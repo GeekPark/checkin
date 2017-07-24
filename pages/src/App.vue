@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <vheader></vheader>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +12,7 @@ export default {
 </script>
 
 <style>
+
 
 html, body, #app {
   width: 100%;
@@ -25,5 +27,7 @@ html, body, #app {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  padding: 5%;
+  text-align: center;
 }
 </style>

@@ -41,6 +41,6 @@ app.get('/check/:ticket_no', controller.check_ticket);
 
 
 console.log('=====================================================');
-console.log('VMS SERVICES START AT ' + utils.dateformat(new Date()));
+console.log('ERIC SERVICES START AT ' + utils.dateformat(new Date()));
 console.log('=====================================================');
 export default app;
