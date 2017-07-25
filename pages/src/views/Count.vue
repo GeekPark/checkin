@@ -1,24 +1,27 @@
 <template lang="jade">
 #count
-  el-tabs(v-model='activeName', @tab-click='handleClick')
-    el-tab-pane(label='8 5  极客探索票', name='1') 8 5  极客探索票
-    el-tab-pane(label='8 5  极客探索票', name='2') 8 6  极客探索票
-    el-tab-pane(label='8 5  极客探索票', name='3') 极客超级票
-    el-tab-pane(label='8 5  极客探索票', name='4') 极客信仰票
+  h2 85极客探索票   {{counts.t_85_checkin}} / {{counts.t_85}}
+  h2 86极客探索票  {{counts.t_86_checkin}} / {{counts.t_86}}
+  h2 极客超级票 &nbsp &nbsp {{counts.t_super_checkin}} / {{counts.t_super}}
+  h2 极客信仰票 &nbsp &nbsp {{counts.t_faith_checkin}} / {{counts.t_faith}}
 </template>
 
 <script>
-// import api from '../vuex/api'
+import api from '../vuex/api'
 export default {
   data () {
     return {
-      activeName: '1'
+      counts: {}
     }
   },
   methods: {
-    handleClick (tab, event) {
-    }
+  },
+  mounted () {
+    api.get('count').then(result => {
+      this.counts = result.data
+    })
   }
+
 }
 </script>
 

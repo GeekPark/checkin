@@ -37,7 +37,7 @@
             span {{info.personal.company || 'null'}}
           p
             span 支付渠道 | 支付日期:
-            span {{info.personal.email || 'null'}}
+            span {{info.payment.pay_time || 'null'}} {{info.payment.pay_type || 'null'}}
           p
             span order id:
             span {{info.ticket.order_id || 'null'}}
@@ -55,6 +55,10 @@ export default {
         ticket_cat: {},
         personal: {}
       }
+    }
+  },
+  watch: {
+    'ticket_no': function (val) {
     }
   },
   methods: {

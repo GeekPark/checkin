@@ -37,6 +37,8 @@ mongo.connect();
 controller.checkdb();
 
 app.get('/check/:ticket_no', controller.check_ticket);
+app.get('/cancel/:ticket_no', controller.cancel);
+app.get('/count', controller.count);
 app.get('/search/:key/:value', controller.search);
 
 

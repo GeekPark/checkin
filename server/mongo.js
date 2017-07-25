@@ -20,11 +20,11 @@ const tickets = newSchema('tickets',{
   activity_id:    String,
   apply_id:       String,
   status:         String,
-  ticket_cat_id:  String,
+  ticket_cat_id:  {type: String, index: true},
   invite_code_id: String,
   created_at:     String,
   updated_at:     String,
-  order_id:       String,
+  order_id:       {type: String, index: true},
   attachment:     String,
   is_media:       String,
   notes:          String,
@@ -33,7 +33,7 @@ const tickets = newSchema('tickets',{
 })
 
 const types = newSchema('types',{
-  id:              String,
+  id:              {type: String, index: true},
   name:            String,
   is_free:         String,
   price:           String,
@@ -95,9 +95,46 @@ const personal_infos = newSchema('personal_infos', {
   card:       String
 })
 
+const orders = newSchema('orders', {
+  id:             String,
+  user_id:        String,
+  ticket_cat_id:  String,
+  price:          String,
+  quantity:       String,
+  total_fee:      String,
+  expires_at:     String,
+  activity_id:    String,
+  status:         String,
+  multi:          String,
+  created_at:     String,
+  updated_at:     String,
+  trade_no:       String,
+  refund_reason:  String,
+  deleted_at:     String,
+  email:          String,
+  mobile:         String,
+  extra_info:     String,
+  ticket_cat_ids: String,
+  discount_id:    String,
+})
+
+const payments = newSchema('payments', {
+  id:          String,
+  activity_id: String,
+  user_id:     String,
+  order_id:    String,
+  total_fee:   String,
+  created_at:  String,
+  updated_at:  String,
+  pay_type:    String,
+  pay_account: String,
+  pay_time:    String,
+  notify_json: String
+})
+
 export default {
   connect:  () => {
-    mongoose.Promise = global.Promise;
+    mongoose.Promise = global.Promise
     const dbname = config.dbname;
     mongoose.connect(dbname, {
       server: { poolSize: 20 }
@@ -113,5 +150,7 @@ export default {
   tickets,
   types,
   users,
-  personal_infos
+  personal_infos,
+  orders,
+  payments
 }
