@@ -37,6 +37,7 @@ mongo.connect();
 controller.checkdb();
 
 app.get('/check/:ticket_no', controller.check_ticket);
+app.get('/search/:key/:value', controller.search);
 
 
 
