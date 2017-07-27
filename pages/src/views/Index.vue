@@ -76,6 +76,7 @@ export default {
           this.take_msg = '签到成功'
           this.info = result.data.data
         }
+        this.ticket_no = ''
       }).catch(err => {
         console.log(err)
         alert('没找到相关票!')
