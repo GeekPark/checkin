@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(logger('dev'));
-
+app.use(express.static(path.join(__dirname, '../pages/dist')));
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin',      '*');
