@@ -15,6 +15,9 @@
             span 取票号码:
             span {{info.ticket.ticket_no || 'null'}}
           p
+            span 签到时间:
+            span {{info.ticket.checkin_time || 'null'}}
+          p
             span 姓名:
             span {{info.personal.realname || 'null'}}
           p
@@ -37,7 +40,8 @@
             span {{info.personal.company || 'null'}}
           p
             span 支付渠道 | 支付日期:
-            span {{info.payment.pay_time || 'null'}} {{info.payment.pay_type || 'null'}}
+            span(v-if='info.payment') {{info.payment.pay_time || 'null'}} {{info.payment.pay_type || 'null'}}
+            span(v-else) 无支付信息
           p
             span order id:
             span {{info.ticket.order_id || 'null'}}
@@ -98,8 +102,6 @@ export default {
 
   }
   .input {
-    width: 200px;
-    height: 40px;
     font-size: 30px;
     outline: none;
     padding: 5px;
@@ -116,6 +118,7 @@ export default {
     text-align: left;
   }
   .info {
+    width: 100%;
     display: inline-block;
     border: 1px solid #DEDEDE;
   }

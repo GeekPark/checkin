@@ -4,10 +4,11 @@
     el-option(v-for='item in options', :label='item.label', :value='item.value')
   input.input(v-model='value', placeholder='回车搜索', @keyup.enter='enter')
   p &nbsp
-  el-table(:data='tickets', style="width: 100%", border)
+  el-table(:data='tickets', style="width: 100%", :row-class-name="tableRowClassName", border)
     el-table-column(prop='ticket_cat.name', label='票种', width='100')
     el-table-column(prop='ticket.ticket_no', label='取票号码', width='130',  fixed="left")
     el-table-column(prop='ticket.state', label='状态', width='100')
+    el-table-column(prop='ticket.checkin_time', label='签到时间', width='130')
     el-table-column(prop='user.realname', label='姓名', width='100')
     el-table-column(prop='user.email', label='邮箱', width='130')
     el-table-column(prop='user.mobile', label='电话', width='130')
@@ -17,7 +18,7 @@
     el-table-column(prop='payment.pay_time', label='订单时间', width='130')
     el-table-column(prop='payment.pay_type', label='方式', width='130')
     el-table-column(prop='ticket.order_id', label='订单号', width='130')
-    el-table-column(label='操作', width='190',  fixed="right")
+    el-table-column(label='操作', width='140',  fixed="right")
       template(scope='scope')
         el-button(size='small',
                   type='info',
@@ -58,6 +59,12 @@ export default {
     }
   },
   methods: {
+    tableRowClassName (row, index) {
+      if (row.ticket.checkin === true) {
+        return 'checkin-true'
+      }
+      return ''
+    },
     enter () {
       api.get(`search/${this.key}/${this.value}`).then(result => {
         this.tickets = result.data
@@ -89,11 +96,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   #query {
     text-align: left;
   }
-  .input {
+  #query .input {
     width: 200px;
     height: 20px;
     font-size: 18px;
@@ -103,7 +110,10 @@ export default {
     text-align: left;
     vertical-align: bottom;
   }
-  .el-table {
+  #query .el-table {
     font-size: 40%;
+  }
+  .el-table .checkin-true {
+    background: #F9E8F0;
   }
 </style>

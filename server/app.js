@@ -4,16 +4,20 @@ import logger         from 'morgan';
 import cookieParser   from 'cookie-parser';
 import bodyParser     from 'body-parser';
 import methodOverride from 'method-override';
+import basicAuth      from 'basic-auth-connect';
 import utils          from './utils';
 import mongo          from './mongo';
 import controller     from  './controller';
+
 const  app            = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(logger('dev'));
-app.use(express.static(path.join(__dirname, '../pages/dist')));
+//basic auth
+// app.use('/', [basicAuth('username', 'password'), express.static(path.join(__dirname, '../pages/dist'))]);
+app.use('/', [express.static(path.join(__dirname, '../pages/dist'))]);
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin',      '*');

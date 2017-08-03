@@ -130,7 +130,7 @@ const cancel = async (req, res)=> {
   if (ticket_no === null) {return res.send({msg: 'params error'});}
   const ticket = await mongo.tickets.findOne({ticket_no: ticket_no});
   if (ticket === null) {return res.send({msg: '-1'});} // 未找到
-  await mongo.tickets.update({ticket_no: ticket_no}, {checkin: false});
+  await mongo.tickets.update({ticket_no: ticket_no}, {checkin: false, checkin_time: ''});
   res.json({msg: '1'});
 }
 
