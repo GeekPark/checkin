@@ -2,10 +2,13 @@ import mongo from './mongo'
 import utils from './utils'
 import fs    from 'fs'
 import iconv from 'iconv-lite'
+import config from './config'
 
+const {TICKETS} = config
 const date = new Date();
-date.setMonth(3, 0);
-console.log(date)
+date.setYear(2016);
+date.setMonth(1, 0);
+console.log('正在获取', utils.dateformat(date), '起的票务数据')
 
 const readcsv = function (path, filter) {
   const fileStr = fs.readFileSync(`./csv/${path}`, {encoding:'binary'});
@@ -13,7 +16,6 @@ const readcsv = function (path, filter) {
   const arr     = iconv.decode(buf, 'utf-8').split("\n");
   const keys    = arr[0].split(';');
   const values  = [];
-
   arr.forEach((el, index) => {
     if (index > 0) {
       const obj = {};
@@ -94,33 +96,17 @@ const check_ticket = async (req, res)=> {
    }
 }
 
-
-// name:极客超级票 id:c4c7334c-aee0-4740-834c-9d2f19d5fdd4
-// name:8月5日 极客探索票 id:9c6e665a-e093-4e66-9ba0-b906bf14da56
-// name:8月6日 极客探索票 id:a5d8e624-07d6-4b3c-8c14-0742ad3cb969
-// name:极客前沿票 id:e53dce70-d0df-4584-94df-bb74143c3764
-// name:极客信仰票 id:b44d07c8-511e-4fe8-94c5-0960471d72ca
-const t_super_name = {ticket_cat_id: 'c4c7334c-aee0-4740-834c-9d2f19d5fdd4'}
-const t_85_name    = {ticket_cat_id: '9c6e665a-e093-4e66-9ba0-b906bf14da56'}
-const t_86_name    = {ticket_cat_id: 'a5d8e624-07d6-4b3c-8c14-0742ad3cb969'}
-const t_faith_name = {ticket_cat_id: 'b44d07c8-511e-4fe8-94c5-0960471d72ca'}
 const assign = (others) => {
   return Object.assign({checkin: true}, others);
 }
 const count = async (req, res)=> {
-  const t_super         = await mongo.tickets.count(t_super_name)
-  const t_super_checkin = await mongo.tickets.count(assign(t_super_name))
-  const t_85            = await mongo.tickets.count(t_85_name)
-  const t_85_checkin    = await mongo.tickets.count(assign(t_85_name))
-  const t_86            = await mongo.tickets.count(t_86_name)
-  const t_86_checkin    = await mongo.tickets.count(assign(t_86_name))
-  const t_faith         = await mongo.tickets.count(t_faith_name)
-  const t_faith_checkin = await mongo.tickets.count(assign(t_faith_name))
-  res.send({t_super, t_super_checkin,
-            t_85,    t_85_checkin,
-            t_86,    t_86_checkin,
-            t_faith, t_faith_checkin
-          })
+  const total = []
+  for (let el of TICKETS) {
+    const count = await mongo.tickets.count({ticket_cat_id: el[0]})
+    total.push([count, el[1]])
+  }
+  // console.log(total)
+  res.send(total)
 }
 
 
@@ -137,6 +123,7 @@ const cancel = async (req, res)=> {
 
 // 干 烦人的逻辑
 const search = async (req, res)=> {
+  const ticket_cat_ids = TICKETS.map(el => el[0])
   const {key, value, index = '0'} = req.params;
   const limit = 30;
   const skip = parseInt(index) * limit;
@@ -168,7 +155,13 @@ const search = async (req, res)=> {
       if (el.checkin !== true) {el.checkin = false;}
       return {user, ticket: el, ticket_cat: cat, payment};
     }))
-    return res.send(handled);
+    const filter_catid = handled.filter(el => {
+      if (ticket_cat_ids.indexOf(el.ticket_cat.id) >= 0) {
+        return true
+      }
+      return false
+    })
+    return res.send(filter_catid);
   }
   const user_query = {};
   user_query[key] = {$regex: value, $options: 'i' };
@@ -194,7 +187,70 @@ const search = async (req, res)=> {
     if (ticket.checkin !== true) {ticket.checkin = false;}
     return {ticket_cat: cat, payment, ticket, user: el};
   }))
-  res.send(typed_user);
+  const filter_catid = typed_user.filter(el => {
+    if (ticket_cat_ids.indexOf(el.ticket_cat.id) >= 0) {
+      return true
+    }
+    return false
+  })
+  res.send(filter_catid);
+}
+
+
+const exportData = async (req, res)=> {
+
+  const checkin_true = await exportAll(true, "已签到.csv")
+  const checkin_false = await exportAll(false, "全部.csv")
+  const all = checkin_true.obj.concat(checkin_false.obj)
+  const total = all.length
+
+  const keys = ['position', 'competency' , 'industry'];
+
+  keys.forEach(k => {
+    const wants = {}
+    all.forEach(el => {
+      if (wants[el.personal[k]] === undefined) {
+        wants[el.personal[k]] = 1
+      } else {
+        wants[el.personal[k]] += 1
+      }
+    })
+    const percent = Object.keys(wants).map(key => {
+      return `${key} = ${wants[key]} = ${(wants[key] / total * 100).toFixed(2)}\n`
+    })
+    fs.writeFile(`md/${k}.md`, percent.join(''), { encoding: 'utf8' }, function(err) {
+    })
+  })
+
+  res.send("success")
+}
+
+async function exportAll(isCheck, name) {
+  let match = {}
+  if (isCheck) {
+    match = {"$match": {"checkin": true}}
+  } else {
+    match = {"$match": {"$nor":[{"checkin": true}]}}
+  }
+  const tickets = await mongo.tickets.aggregate([
+         match,
+        { $lookup: {
+          from: "personal_infos",
+          localField: "user_id",
+          foreignField: "user_id",
+          as: "personal"
+         }
+       },
+       { $unwind: "$personal" }
+      ]);
+
+  const section = "realname\temail\tmobile\tposition\tindustry\tcompetency\tcheckin_time\n"
+  const checkinCsv =  tickets.map((el) => {
+    return `${el.personal.realname}\t${el.personal.email}\t${el.personal.mobile}\t${el.personal.position}\t${el.personal.industry}\t${el.personal.competency}\t${el.checkin_time}\n`
+  })
+  // fs.writeFile(name, '\ufeff' + (section + checkinCsv), { encoding: 'utf16le' }, function(err) {
+  // })
+  return {str: checkinCsv, obj: tickets}
 }
 
 export default {
@@ -202,5 +258,6 @@ export default {
   check_ticket,
   search,
   cancel,
-  count
+  count,
+  exportData
 }

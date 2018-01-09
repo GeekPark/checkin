@@ -15,7 +15,7 @@ const newSchema = function (name, options) {
 
 const tickets = newSchema('tickets',{
   user_id:        {type: String, index: true},
-  checkin:        {type:Boolean, default: false},
+  checkin:        {type:Boolean, index: true},
   id:             String,
   activity_id:    String,
   apply_id:       String,

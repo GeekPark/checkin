@@ -1,9 +1,6 @@
 <template lang="jade">
 #count
-  h2 85极客探索票   {{counts.t_85_checkin}} / {{counts.t_85}}
-  h2 86极客探索票  {{counts.t_86_checkin}} / {{counts.t_86}}
-  h2 极客超级票 &nbsp &nbsp {{counts.t_super_checkin}} / {{counts.t_super}}
-  h2 极客信仰票 &nbsp &nbsp {{counts.t_faith_checkin}} / {{counts.t_faith}}
+  h2(v-for='(item, $index) in total', :key='$index') {{item[1]}} {{item[0]}}
 </template>
 
 <script>
@@ -11,14 +8,14 @@ import api from '../vuex/api'
 export default {
   data () {
     return {
-      counts: {}
+      total: []
     }
   },
   methods: {
   },
   mounted () {
     api.get('count').then(result => {
-      this.counts = result.data
+      this.total = result.data
     })
   }
 

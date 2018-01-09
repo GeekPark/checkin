@@ -1,7 +1,7 @@
 <template lang="jade">
 #query
   el-select(v-model='key', placeholder='请选择')
-    el-option(v-for='item in options', :label='item.label', :value='item.value')
+    el-option(v-for='item in options', :label='item.label', :value='item.value', :key='item.value')
   input.input(v-model='value', placeholder='回车搜索', @keyup.enter='enter')
   p &nbsp
   el-table(:data='tickets', style="width: 100%", :row-class-name="tableRowClassName", border)
@@ -99,6 +99,7 @@ export default {
 <style>
   #query {
     text-align: left;
+    padding-bottom: 50px;
   }
   #query .input {
     width: 200px;
