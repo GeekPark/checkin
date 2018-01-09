@@ -7,7 +7,7 @@ builds/*
 node_modules/
 npm-debug.log
 npm-debug.log.*
-config/index.js
+server/config/index.js
 .csv
 config.js
 thumbs.db
