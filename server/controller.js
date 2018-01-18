@@ -86,7 +86,7 @@ const check_ticket = async (req, res)=> {
    const payment    = await mongo.payments.findOne({order_id: ticket.order_id});
    const data       = {ticket, ticket_cat, personal, payment};
 
-   if (ticket.checkin === false) { // 未取票
+   if (ticket.checkin === false || ticket.checkin === undefined || ticket.checkin === null) { // 未取票
       ticket.checkin      = true,
       ticket.checkin_time = utils.dateformat(new Date());
       ticket.save();
