@@ -8,7 +8,7 @@
     el-table-column(prop='ticket_cat.name', label='票种', width='100')
     el-table-column(prop='ticket.ticket_no', label='取票号码', width='130',  fixed="left")
     el-table-column(prop='ticket.state', label='状态', width='100')
-    el-table-column(prop='payment.notify_json.total_fee', label='价格', width='100')
+    el-table-column(prop='payment.price', label='价格', width='100')
     el-table-column(prop='ticket.checkin_time', label='签到时间', width='130')
     el-table-column(prop='user.realname', label='姓名', width='100')
     el-table-column(prop='user.email', label='邮箱', width='130')
@@ -30,10 +30,8 @@
 </template>
 
 <script>
-const replaceAll = function (str, search, replacement) {
-  return str.replace(new RegExp(search, 'g'), replacement)
-}
 import api from '../vuex/api'
+import helper from './helper'
 export default {
   data () {
     return {
@@ -59,21 +57,10 @@ export default {
     'tickets': function (val) {
       val.forEach(el => {
         el.ticket.state = el.ticket.checkin === true ? '已签到' : '未签到'
-        try {
-          if (el.ticket_cat.name === '极客先锋票') {
-            el.ticket_cat.name += '2017-01-19'
-          } else if (el.ticket_cat.name === '极客探索票') {
-            el.ticket_cat.name += '2017-01-20'
-          } else if (el.ticket_cat.name === '极客趣享票') {
-            el.ticket_cat.name += '2017-01-21'
-          }
-          let str = replaceAll(el.payment.notify_json, '""', '"')
-          str = str.replace('"', '').replace('}"', '}')
-          el.payment.notify_json = JSON.parse(str)
-        } catch (e) {
-          console.log('未找到价格')
-          console.log(el.payment)
-        }
+        const {name, price} = helper(el)
+        console.log(price)
+        el.payment.price = price
+        el.ticket_cat.name = name
       })
     }
   },

@@ -18,6 +18,9 @@
             span 签到时间:
             span {{info.ticket.checkin_time || 'null'}}
           p
+            span 价格:
+            span {{info.payment.price || 'null'}}
+          p
             span 姓名:
             span {{info.personal.realname || 'null'}}
           p
@@ -49,6 +52,7 @@
 
 <script>
 import api from '../vuex/api'
+import helper from './helper'
 export default {
   data () {
     return {
@@ -81,6 +85,9 @@ export default {
           this.info = result.data.data
         }
         this.ticket_no = ''
+        const {name, price} = helper(this.info)
+        this.info.payment.price = price
+        this.info.ticket_cat.name = name
       }).catch(err => {
         console.log(err)
         alert('没找到相关票!')
