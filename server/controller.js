@@ -121,9 +121,9 @@ const cancel = async (req, res)=> {
 }
 
 
+const ticket_cat_ids = TICKETS.map(el => el[0])
 // 干 烦人的逻辑
 const search = async (req, res)=> {
-  const ticket_cat_ids = TICKETS.map(el => el[0])
   const {key, value, index = '0'} = req.params;
   const limit = 30;
   const skip = parseInt(index) * limit;
@@ -253,9 +253,57 @@ async function exportAll(isCheck, name) {
   return {str: checkinCsv, obj: tickets}
 }
 
+const gift = async (req, res)=> {
+  const {phone = ''} = req.params;
+  if (phone.length < 11) {
+    return  res.send({msg: '手机号错误', success: false})
+  }
+  const user_query = {mobile: {$regex: phone, $options: 'i' }};
+  const exist_user = await mongo.personal_infos.aggregate([
+                     { $match: user_query },
+                     // {"$skip": skip},
+                     // {"$limit": limit},
+                     { $lookup: {
+                        from: "tickets",
+                        localField: "user_id",
+                        foreignField: "user_id",
+                        as: "ticket"
+                       }
+                     },
+                     { $unwind: "$ticket" }
+                     ]);
+  const typed_user = await Promise.all(exist_user.map(async el => {
+    const cat     = await mongo.types.findOne({id: el.ticket.ticket_cat_id});
+    const payment = await mongo.payments.findOne({order_id: el.ticket.order_id})
+    const ticket  = el.ticket;
+    delete el.ticket;
+    if (ticket.checkin !== true) {ticket.checkin = false;}
+    return {ticket_cat: cat, payment, ticket, user: el};
+  }))
+  const tickets = typed_user.filter(el => {
+    if (ticket_cat_ids.indexOf(el.ticket_cat.id) >= 0) {
+      return true
+    }
+    return false
+  })
+  const gifts = await mongo.gift.find({phone: phone}) || []
+  // 路人
+  if (tickets.length === 0 && gifts.length === 0) {
+    await mongo.gift.create({phone: phone})
+    return res.send({msg: '这是个游客, 请给他礼品!', success: true})
+  } else if (gifts.length < tickets.length){
+    await mongo.gift.create({phone: phone})
+    return res.send({msg: `这人买了${tickets.length}张票, 当前兑换了${gifts.length}, 请给他礼品!`, success: true})
+  } else {
+    return res.send({msg: `这人买了${tickets.length}张票, 当前兑换了${gifts.length}, 不能给他礼品`, success: false})
+  }
+
+}
+
 export default {
   checkdb,
   check_ticket,
+  gift,
   search,
   cancel,
   count,

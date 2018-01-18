@@ -132,6 +132,10 @@ const payments = newSchema('payments', {
   notify_json: String
 })
 
+const gift = newSchema('gift', {
+  phone: String
+})
+
 export default {
   connect:  () => {
     mongoose.Promise = global.Promise
@@ -152,5 +156,6 @@ export default {
   users,
   personal_infos,
   orders,
-  payments
+  payments,
+  gift
 }

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Index from '../views/Index.vue'
 import Count from '../views/Count.vue'
 import Query from '../views/Query.vue'
-
+import Gift from '../views/Gift.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -26,6 +26,12 @@ const router = new Router({
       name: 'Count',
       component: Count,
       meta: { title: '统计' }
+    },
+    {
+      path: '/gift',
+      name: 'Gift',
+      component: Gift,
+      meta: { title: '兑奖' }
     }
   ]
 })

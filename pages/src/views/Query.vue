@@ -58,7 +58,6 @@ export default {
       val.forEach(el => {
         el.ticket.state = el.ticket.checkin === true ? '已签到' : '未签到'
         const {name, price} = helper(el)
-        console.log(price)
         el.payment.price = price
         el.ticket_cat.name = name
       })
