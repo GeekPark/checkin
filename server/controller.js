@@ -103,11 +103,15 @@ const check_ticket = async (req, res)=> {
     });
     console.log(1)
     if (early === null || early === undefined) {
-      const payment = await mongo.payments.findOne({user_id: ticket.user_id, total_fee: "10.24"});
-      early = await mongo.tickets.findOne({user_id: ticket.user_id, order_id: payment.order_id})
-      early.checkin = true
-      early.save()
-      isSucc = true
+      try {
+        const payment = await mongo.payments.findOne({user_id: ticket.user_id, total_fee: "10.24"});
+        early = await mongo.tickets.findOne({user_id: ticket.user_id, order_id: payment.order_id})
+        early.checkin = true
+        early.save()
+        isSucc = true
+      } catch (e) {
+        console(e)
+      }
       console.log(2)
     } else {
       console.log(3)
@@ -122,10 +126,14 @@ const check_ticket = async (req, res)=> {
     });
     console.log(4)
     if (tomoon === null || tomoon === undefined) {
-      tomoon = await mongo.tickets.findOne({user_id: ticket.user_id, ticket_cat_id: tomoonID})
-      tomoon.checkin = true
-      tomoon.save()
-      isSucc = true
+      try {
+        tomoon = await mongo.tickets.findOne({user_id: ticket.user_id, ticket_cat_id: tomoonID})
+        tomoon.checkin = true
+        tomoon.save()
+        isSucc = true
+      } catch (e) {
+        console.log(e)
+      }
       console.log(5)
     } else {
       console.log(6)
