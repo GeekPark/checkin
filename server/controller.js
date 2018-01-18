@@ -91,7 +91,7 @@ const check_ticket = async (req, res)=> {
    let isSucc = false
    console.log(ticket.ticket_cat_id)
    console.log(tomoonID)
-   console.log(payment.total_fee)
+   console.log(payment)
    // 升舱票
   if (ticket.ticket_cat_id === tomoonID) {
     console.log('升舱', ticket.ticket_cat_id, tomoonID)
@@ -117,7 +117,7 @@ const check_ticket = async (req, res)=> {
       console.log(3)
     }
     // 早鸟
-  } else if(payment.total_fee === "10.24") {
+  } else if(payment !== null && payment !== undefined && payment.total_fee === "10.24") {
     console.log('早鸟')
     let tomoon = await mongo.tickets.findOne({
       user_id: ticket.user_id,
