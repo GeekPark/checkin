@@ -37,7 +37,7 @@ export default {
     return {
       tickets: [],
       key: 'mobile',
-      value: '1851024',
+      value: '',
       options: [{
         value: 'mobile',
         label: '手机号'

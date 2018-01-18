@@ -15,7 +15,7 @@ const newSchema = function (name, options) {
 
 const tickets = newSchema('tickets',{
   user_id:        {type: String, index: true},
-  checkin:        {type:Boolean, index: true},
+  checkin:        {type: Boolean, index: true, default: false},
   id:             String,
   activity_id:    String,
   apply_id:       String,
@@ -148,6 +148,7 @@ export default {
         console.error(`connect to ${dbname} error: ${err.message}`)
         process.exit(1);
       }
+      // console.log(mongoose)
       return mongoose.connection;
     });
   },

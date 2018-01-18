@@ -74,6 +74,9 @@ const checkdb = function () {
   });
 }
 
+const earlyID = '622741b8-8ee8-40fc-88f7-6298e448786b'
+const tomoonID = 'bd21a97f-e00f-4ae7-a995-75040706246b'
+
 const check_ticket = async (req, res)=> {
    const {ticket_no = null} = req.params;
    if (ticket_no === null) {return res.send({msg: 'params error'});}
@@ -85,9 +88,51 @@ const check_ticket = async (req, res)=> {
    const personal   = await mongo.personal_infos.findOne({user_id: userid});
    const payment    = await mongo.payments.findOne({order_id: ticket.order_id});
    const data       = {ticket, ticket_cat, personal, payment};
-
-   if (ticket.checkin === false || ticket.checkin === undefined || ticket.checkin === null) { // 未取票
-      ticket.checkin      = true,
+   let isSucc = false
+   console.log(ticket.ticket_cat_id)
+   console.log(tomoonID)
+   console.log(payment.total_fee)
+   // 升舱票
+  if (ticket.ticket_cat_id === tomoonID) {
+    console.log('升舱', ticket.ticket_cat_id, tomoonID)
+    const paymentInfo = await mongo.payments.findOne({user_id: ticket.user_id, total_fee: "10.24"})
+    let early = await mongo.tickets.findOne({
+      user_id: ticket.user_id,
+      order_id: paymentInfo.order_id,
+      checkin: true
+    });
+    console.log(1)
+    if (early === null || early === undefined) {
+      const payment = await mongo.payments.findOne({user_id: ticket.user_id, total_fee: "10.24"});
+      early = await mongo.tickets.findOne({user_id: ticket.user_id, order_id: payment.order_id})
+      early.checkin = true
+      early.save()
+      isSucc = true
+      console.log(2)
+    } else {
+      console.log(3)
+    }
+    // 早鸟
+  } else if(payment.total_fee === "10.24") {
+    console.log('早鸟')
+    let tomoon = await mongo.tickets.findOne({
+      user_id: ticket.user_id,
+      ticket_cat_id: tomoonID,
+      checkin: true
+    });
+    console.log(4)
+    if (tomoon === null || tomoon === undefined) {
+      tomoon = await mongo.tickets.findOne({user_id: ticket.user_id, ticket_cat_id: tomoonID})
+      tomoon.checkin = true
+      tomoon.save()
+      isSucc = true
+      console.log(5)
+    } else {
+      console.log(6)
+    }
+  }
+   if (ticket.checkin === false || ticket.checkin === undefined || ticket.checkin === null || isSucc) { // 未取票
+      ticket.checkin  = true,
       ticket.checkin_time = utils.dateformat(new Date());
       ticket.save();
       res.json({data});
